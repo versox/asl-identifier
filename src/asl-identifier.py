@@ -14,11 +14,14 @@ def main():
 
     train_data, label = loadTrainData()
 
-    print(train_data[0].shape)
+    y_binary = keras.utils.to_categorical(label)
+
+    # print(train_data.shape)
+    # print(label.shape)
 
     model = keras.Sequential()
     model.add(
-        keras.layers.Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='same', input_shape=train_data[0].shape)
+        keras.layers.Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='same', input_shape=(50,50,1))
     )
     model.add(
         keras.layers.MaxPool2D(pool_size=(2, 2), strides=2),
@@ -34,11 +37,37 @@ def main():
     )
 
     print(model.summary())
+    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+    model.fit(
+        x=train_data,
+        y=y_binary
+    )
+    
+    test_data, test_labels = loadTestData()
+    test_labels_binary = keras.utils.to_categorical(test_labels)
+    preds = model.predict(test_data)
+    print(preds)
+
+
+def loadTestData():
+    test_folder = "../data/asl_alphabet_test/"
+
+    test_data = []
+    labels = []
+
+    for img_file in os.listdir(test_folder):
+        img = cv2.imread(os.path.join(test_folder, img_file), cv2.IMREAD_GRAYSCALE)
+        resized = np.reshape(cv2.resize(img, (50, 50)), (50,50,1))
+        test_data.append(resized)
+        label = figureOutLabel(re.findall(r"[^_]*_",img_file)[0][:-1])
+        labels.append(label)
+
+    return np.array(test_data), np.array(labels)
 
 
 def loadTrainData():
-    # train_folder = '../data/asl_alphabet_train/'
-    train_folder = '../data/small/'
+    train_folder = '../data/asl_alphabet_train/'
+    # train_folder = '../data/small/'
 
     td = []
     labels = []
@@ -56,8 +85,8 @@ def loadTrainData():
             img = cv2.imread(os.path.join(train_folder, folder,
                                           img_file), cv2.IMREAD_GRAYSCALE)
             # resize to something more managable (50x50)
-            resized = cv2.resize(img, (50, 50))
-            td.append(np.array(resized))
+            resized = np.reshape(cv2.resize(img, (50, 50)), (50,50,1))
+            td.append(resized)
             labels.append(label)
 
     return np.array(td), np.array(labels)
