@@ -1,3 +1,6 @@
 data/
 .idea/
 .vscode/
+src/alexnetASL_alphabet.pth
+src/resnet18ASL_alphabet.pth
+src/squeezenetASL_alphabet.pth
