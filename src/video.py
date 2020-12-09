@@ -1,5 +1,6 @@
 import cv2
 import mpHelper
+from predictor import get_prediction
 
 class Video():
     __createKey = object()
@@ -35,14 +36,19 @@ class Video():
             if not ret: # EOF
                 break
             frame = cv2.resize(frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
+            # flip the image horizontally
+            frame = cv2.flip(frame, 1)
+
+            bounding = mpHelper.getBounding(frame)
 
     # No crop with box
-            # cv2.imshow(str(id(self)), mpHelper.getBounding(frame)[0])
+            cv2.imshow(str(id(self)), bounding[0])
             
     # Crop
-            crops = mpHelper.getBounding(frame)[1]
+            crops = bounding[1]
             if (crops and len(crops) > 0):
-                cv2.imshow(str(id(self)), crops[0])
+                # cv2.imshow(str(id(self)), crops[0])
+                print(get_prediction(crops[0]))
 
             c = cv2.waitKey(1)
             if c == 27: #ESC key

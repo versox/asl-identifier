@@ -7,16 +7,16 @@ import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-
+import config
 
 transform = transforms.Compose(
     [transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-trainset = torchvision.datasets.ImageFolder(root='./asl_alphabet_train/asl_alphabet_train/', transform=transform)
+trainset = torchvision.datasets.ImageFolder(root=config.dataRoot + '/asl_alphabet_train/', transform=transform)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=100, shuffle=True, num_workers=2)
 
-testset = torchvision.datasets.ImageFolder(root='./asl_alphabet_test/asl_alphabet_test/', transform=transform)
+testset = torchvision.datasets.ImageFolder(root=config.dataRoot + '/asl_alphabet_test/', transform=transform)
 testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=2)
 
 classes = ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'del', 'nothing', 'space')
