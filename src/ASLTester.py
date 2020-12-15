@@ -10,14 +10,15 @@ import torch.optim as optim
 import config
 
 transform = transforms.Compose(
-    [transforms.ToTensor(),
-     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    [transforms.Resize((200, 200)),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-trainset = torchvision.datasets.ImageFolder(root=config.dataRoot + '/asl_alphabet_train/', transform=transform)
+trainset = torchvision.datasets.ImageFolder(root=config.dataRoot + 'asl_alphabet_train/', transform=transform)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=100, shuffle=True, num_workers=2)
 
-testset = torchvision.datasets.ImageFolder(root=config.dataRoot + '/asl_alphabet_test/', transform=transform)
-testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=2)
+testset = torchvision.datasets.ImageFolder(root=config.dataRoot + 'asl_alphabet_test/', transform=transform)
+testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=True, num_workers=2)
 
 classes = ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'del', 'nothing', 'space')
 
@@ -34,11 +35,11 @@ if __name__ == "__main__":
     images, labels = dataiter.next()
 
     # print images
-    imshow(torchvision.utils.make_grid(images))
+    #imshow(torchvision.utils.make_grid(images))
     print('GroundTruth: ', ' '.join('%5s' % classes[labels[j]] for j in range(4)))
 
     #*** Change name of saved model if using different pretrained ***
-    PATH = './resnet18ASL_alphabet.pth'
+    PATH = './ASL_alphabet.pth'
 
     """
         For squeezenet:
@@ -51,8 +52,8 @@ if __name__ == "__main__":
         net = models.resnet18(pretrained=True)
         net.fc = nn.Linear(512, 29)
     """
-    net = models.resnet18(pretrained=True)
-    net.fc = nn.Linear(512, 29)
+    net = models.squeezenet1_0(pretrained=True)
+    net.classifier[1] = nn.Conv2d(512, 29, kernel_size=(1,1), stride=(1,1))
     net.load_state_dict(torch.load(PATH))
 
     outputs = net(images)

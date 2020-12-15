@@ -10,13 +10,14 @@ import torch.optim as optim
 import config
 
 transform = transforms.Compose(
-    [transforms.ToTensor(),
-     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    [transforms.Resize((200, 200)),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-trainset = torchvision.datasets.ImageFolder(root=config.dataRoot + '/asl_alphabet_train/', transform=transform)
+trainset = torchvision.datasets.ImageFolder(root=config.dataRoot + 'asl_alphabet_train/', transform=transform)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=100,shuffle=True, num_workers=2)
 
-testset = torchvision.datasets.ImageFolder(root=config.dataRoot + '/asl_alphabet_test/', transform=transform)
+testset = torchvision.datasets.ImageFolder(root=config.dataRoot + 'asl_alphabet_test/', transform=transform)
 testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=2)
 
 classes = ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'del', 'nothing', 'space')
@@ -37,9 +38,9 @@ if __name__ == "__main__":
     images, labels = dataiter.next()
 
     # show images
-    imshow(torchvision.utils.make_grid(images))
+    #imshow(torchvision.utils.make_grid(images))
     # print labels
-    print(' '.join('%5s' % classes[labels[j]] for j in range(4)))
+    #print(' '.join('%5s' % classes[labels[j]] for j in range(4)))
     
     """
         For squeezenet:
@@ -53,9 +54,8 @@ if __name__ == "__main__":
         net.fc = nn.Linear(512, 29)
     """
     
-    net = models.resnet18(pretrained=True)
-    # KEEP THIS IN MIND - if using different pretrained models, the name for the final layer may be different
-    net.fc = nn.Linear(512, 29)
+    net = models.squeezenet1_0(pretrained=True)
+    net.classifier[1] = nn.Conv2d(512, 29, kernel_size=(1,1), stride=(1,1))
 
     #train on GPU instead of CPU
     net.to(device)
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
-    for epoch in range(2):  # loop over the dataset multiple times
+    for epoch in range(20):  # loop over the dataset multiple times
 
         running_loss = 0.0
         for i, data in enumerate(trainloader, 0):
@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
             # print statistics
             running_loss += loss.item()
-            if i % 100 == 0:    # print every mini-batch
+            if i % 1 == 0:    # print every mini-batch
                 print('[%d, %5d] loss: %.15f' %
                     (epoch + 1, i + 1, running_loss / 2000))
                 running_loss = 0.0
@@ -93,6 +93,6 @@ if __name__ == "__main__":
     print('Finished Training')
     
     #*** Change name of saved model if using different pretrained ***
-    PATH = './resnet18ASL_alphabet.pth'
+    PATH = './ASL_alphabet.pth'
 
     torch.save(net.state_dict(), PATH)

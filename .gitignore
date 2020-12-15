@@ -5,3 +5,4 @@ data/
 src/alexnetASL_alphabet.pth
 src/resnet18ASL_alphabet.pth
 src/squeezenetASL_alphabet.pth
+src/squeezenetepoch20modifiedpicsASL_alphabet.pth
