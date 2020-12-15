@@ -17,9 +17,9 @@ classes = ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
 
 torch.multiprocessing.freeze_support()
 
-PATH = './resnet18ASL_alphabet.pth'
-net = models.resnet18(pretrained=True)
-net.fc = nn.Linear(512, 29)
+PATH = './ASL_alphabet.pth'
+net = models.squeezenet1_0(pretrained=True)
+net.classifier[1] = nn.Conv2d(512, 29, kernel_size=(1,1), stride=(1,1))
 net.load_state_dict(torch.load(PATH))
 net.eval()
 
