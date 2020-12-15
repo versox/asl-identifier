@@ -6,11 +6,11 @@ Then activate it with `conda activate aslIdentify`
 Ensure you have Pytorch, OpenCV, Mediapipe and TensorFlow installed.
 
 ## Data
-Get the Kaggle datasets for the alphabet\
+Get the Kaggle datasets for the alphabet from:\
 https://www.kaggle.com/grassknoted/asl-alphabet \
 and\
 https://www.kaggle.com/kuzivakwashe/significant-asl-sign-language-alphabet-dataset \
-and put it in a folder called 'data' at the root.\
+then put the datasets in training and testing folders, located in a folder 'data' at the root.\
 Each letter should have its own subfolder.
 
 ![alt](https://github.com/versox/asl-identifier/blob/master/other/folder_structure.png)
