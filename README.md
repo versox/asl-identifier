@@ -20,4 +20,5 @@ Each letter should have its own subfolder.
 If you wish to train the model on the data, run ASLTrainer.py in a command terminal after ensuring you have correctly downloaded and separated the images from Kaggle.
 
 ## Running the Program
+** Before running the identifier, if using the zipped model in this GitHub, extract the model ASL_alphabet.zip to the same directory it is currently in **
 To run the ASL identifier, run asl-identifier.py in a command terminal.
